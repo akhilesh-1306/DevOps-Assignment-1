@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  web-service:
+    build: ./web-service
+    container_name: 2022BCD0034-web
+    ports:
+      - "8080:8081"
+    depends_on:
+      - mongo
+    networks:
+      - microservice-net
+
+  worker-service:
+    build: ./worker-service
+    container_name: 2022BCD0034-worker
+    depends_on:
+      - mongo
+    networks:
+      - microservice-net
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - microservice-net
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+    ports:
+      - "8082:8081"
+    depends_on:
+      - mongo
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+
+volumes:
+  mongo-data:
